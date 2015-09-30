@@ -1,0 +1,75 @@
+Buildfile: /Users/amelie/temp/simpledb_437_hw/build.xml
+
+compile:
+
+testcompile:
+
+runtest:
+    [junit] Running simpledb.systemtest.BufferPolicyTest
+    [junit] Testsuite: simpledb.systemtest.BufferPolicyTest
+    [junit] Tests run: 1, Failures: 0, Errors: 0, Time elapsed: 0.696 sec
+    [junit] Tests run: 1, Failures: 0, Errors: 0, Time elapsed: 0.696 sec
+    [junit] ------------- Standard Output ---------------
+    [junit] BufferPolicyTest creating large table
+    [junit] BufferPolicyTest File Size is  ***102***  pages
+    [junit] -------------------------------------------------------------------
+    [junit] BufferPolicyTest testing LRU on scan
+    [junit] New Buffer, Size 10 pages
+    [junit] Sequential scan of file ID: -234277732, 3 times
+    [junit] BufferPolicyTest scan complete, reporting number of hits and misses
+    [junit] Number of Hits: 0
+    [junit] Number of Misses: 306
+    [junit] -------------------------------------------------------------------
+    [junit] BufferPolicyTest testing MRU on scan
+    [junit] New Buffer, Size 10 pages
+    [junit] Sequential scan of file ID: -234277732, 3 times
+    [junit] BufferPolicyTest scan complete, reporting number of hits and misses
+    [junit] Number of Hits: 20
+    [junit] Number of Misses: 286
+    [junit] -------------------------------------------------------------------
+    [junit] BufferPolicyTest testing LRU on scan
+    [junit] New Buffer, Size 50 pages
+    [junit] Sequential scan of file ID: -234277732, 3 times
+    [junit] BufferPolicyTest scan complete, reporting number of hits and misses
+    [junit] Number of Hits: 0
+    [junit] Number of Misses: 306
+    [junit] -------------------------------------------------------------------
+    [junit] BufferPolicyTest testing MRU on scan
+    [junit] New Buffer, Size 50 pages
+    [junit] Sequential scan of file ID: -234277732, 3 times
+    [junit] BufferPolicyTest scan complete, reporting number of hits and misses
+    [junit] Number of Hits: 100
+    [junit] Number of Misses: 206
+    [junit] -------------------------------------------------------------------
+    [junit] BufferPolicyTest testing LRU on scan
+    [junit] New Buffer, Size 120 pages
+    [junit] Sequential scan of file ID: -234277732, 3 times
+    [junit] BufferPolicyTest scan complete, reporting number of hits and misses
+    [junit] Number of Hits: 204
+    [junit] Number of Misses: 102
+    [junit] -------------------------------------------------------------------
+    [junit] BufferPolicyTest testing MRU on scan
+    [junit] New Buffer, Size 120 pages
+    [junit] Sequential scan of file ID: -234277732, 3 times
+    [junit] BufferPolicyTest scan complete, reporting number of hits and misses
+    [junit] Number of Hits: 204
+    [junit] Number of Misses: 102
+    [junit] -------------------------------------------------------------------
+    [junit] BufferPolicyTest testing LRU on random accesses (checks that last usage is recorded in buffer)
+    [junit] New Buffer, Size 10 pages
+    [junit] BufferPolicyTest random accesses complete, reporting number of hits and misses
+    [junit] Number of Hits: 10
+    [junit] Number of Misses: 20
+    [junit] -------------------------------------------------------------------
+    [junit] BufferPolicyTest testing MRU on scan
+    [junit] New Buffer, Size 10 pages
+    [junit] BufferPolicyTest random accesses complete, reporting number of hits and misses
+    [junit] BufferPolicyTest scan complete, reporting number of hits and misses
+    [junit] Number of Hits: 8
+    [junit] Number of Misses: 22
+    [junit] ------------- ---------------- ---------------
+    [junit] 
+    [junit] Testcase: testBufferReplacementPolicies took 0.687 sec
+
+BUILD SUCCESSFUL
+Total time: 1 second
