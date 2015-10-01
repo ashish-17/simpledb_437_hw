@@ -56,46 +56,48 @@ public class HeapFile implements DbFile {
     /**
      * Returns a Page from tHhe file.
      */
-    public Page readPage(PageId pid) throws NoSuchElementException, IOException, FileNotFoundException {
-	//System.out.println("read hf page" + pid.tableid() +"  "+pid.pageno());
-     
-	byte [] readpage = new byte[BufferPool.PAGE_SIZE];
-	for(int i=0; i<BufferPool.PAGE_SIZE; i++)
-	    readpage[i]=0;
-	DataInputStream buffer = new DataInputStream(new FileInputStream(hfile));
-	
-	int tuplesPerPage = (BufferPool.PAGE_SIZE*8) / ((_td.getSize()*8)+1);
-	int headersize = (int)Math.ceil(tuplesPerPage/8);
+	public Page readPage(PageId pid) throws NoSuchElementException, IOException, FileNotFoundException {
+		// System.out.println("read hf page" + pid.tableid() +" "+pid.pageno());
 
+		byte[] readpage = new byte[BufferPool.PAGE_SIZE];
+		for (int i = 0; i < BufferPool.PAGE_SIZE; i++)
+			readpage[i] = 0;
+		DataInputStream buffer = new DataInputStream(new FileInputStream(hfile));
 
-	try {
-	    //The headeer size may not be right
-	    int sk = buffer.skipBytes((BufferPool.PAGE_SIZE+headersize+1)*pid.pageno());
-	    if(sk!=-1){
-		int c = buffer.read(readpage,0,BufferPool.PAGE_SIZE);
-		if (c!=-1){
-		    if (c!=BufferPool.PAGE_SIZE)
-			readpage[c]=-1;
-		    HeapPageId newPageId = (HeapPageId) pid;
-		    return new HeapPage(newPageId,readpage);
+		int tuplesPerPage = (BufferPool.PAGE_SIZE * 8) / ((_td.getSize() * 8) + 1);
+		int headersize = (int) Math.ceil(tuplesPerPage / 8);
+
+		try {
+			// The headeer size may not be right
+			int sk = buffer.skipBytes((BufferPool.PAGE_SIZE + headersize + 1) * pid.pageno());
+			if (sk != -1) {
+				int c = buffer.read(readpage, 0, BufferPool.PAGE_SIZE);
+				if (c != -1) {
+					if (c != BufferPool.PAGE_SIZE)
+						readpage[c] = -1;
+					HeapPageId newPageId = (HeapPageId) pid;
+					return new HeapPage(newPageId, readpage);
+				} else
+					return null;
+			} else
+				return null;
+		} catch (IOException e) {
+			return null;
+		} catch (NoSuchElementException e) {
+			return null;
 		}
-		else
-		    return null;
-	    }
-	    else
-		return null;
-	} catch (IOException e) {
-	    return null;
-	} catch (NoSuchElementException e){
-	    return null;
 	}
-    }
 
     /**
      * Writes the given page to the appropriate location in the file.
      */
     public void writePage(Page page) throws IOException {
-        // some code goes here
+        int pageCount = numPages();
+        if (page.id().pageno() <= pageCount) {
+        	// Page already present in the heap file, we need to overwrite its contents.
+        } else {
+        	
+        }
     }
 
     /**
