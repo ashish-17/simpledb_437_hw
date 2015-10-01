@@ -95,8 +95,26 @@ public class HeapFile implements DbFile {
         int pageCount = numPages();
         if (page.id().pageno() <= pageCount) {
         	// Page already present in the heap file, we need to overwrite its contents.
+        	RandomAccessFile output = new RandomAccessFile(hfile, "rw");
+        	try {
+            	int bytesToSkip = (BufferPool.PAGE_SIZE * (page.id().pageno() - 1));
+            	output.seek(bytesToSkip);
+            	output.write(page.getPageData());
+        	} catch (Exception e) {
+        		throw new IOException(e);
+        	} finally {
+        		output.close();
+			}
         } else {
-        	
+        	// Append the page at the end of the file.
+        	DataOutputStream output = new DataOutputStream(new FileOutputStream(hfile, true));
+        	try {
+            	output.write(page.getPageData());
+        	} catch (Exception e) {
+        		throw new IOException(e);
+        	} finally {
+        		output.close();
+			}
         }
     }
 
