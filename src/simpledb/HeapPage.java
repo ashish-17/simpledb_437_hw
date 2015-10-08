@@ -33,10 +33,9 @@ public class HeapPage implements Page {
 		int[] header;
 		
 		/**
-		 * @param numSlots - Number of slots in heap page.
 		 * @param dis - Data input stream to be used to fetch header data.
 		 */
-		public Header(int numSlots, DataInputStream dis) {
+		public Header(DataInputStream dis) {
 			
 			// We are allocating 1 bit per slot, storing data for 32 slots in one integer.
 			int numHeaderInts = (numSlots / 32) + 1;
@@ -160,7 +159,7 @@ public class HeapPage implements Page {
 		DataInputStream dis = new DataInputStream(new ByteArrayInputStream(data));
 
 		// allocate and read the header slots of this page
-		header = new Header(numSlots, dis);
+		header = new Header(dis);
 		
 		try {
 			// allocate and read the actual records of this page
