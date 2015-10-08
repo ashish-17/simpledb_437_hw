@@ -1,6 +1,9 @@
 package simpledb;
 
 import java.io.*;
+import java.util.Queue;
+import java.util.Stack;
+import java.util.concurrent.ArrayBlockingQueue;
 
 /**
  * BufferPool manages the reading and writing of pages into memory from
@@ -23,6 +26,8 @@ public class BufferPool {
     int _numhits=0;
     int _nummisses=0;
     
+    int maxPagesInBuffer;
+    Queue<Page> bufferedPages;
 
     /**
      * Constructor.
@@ -30,7 +35,8 @@ public class BufferPool {
      * @param numPages number of pages in this buffer pool
      */
     public BufferPool(int numPages) {
-        //IMPLEMENT THIS
+        this.maxPagesInBuffer = numPages;
+        bufferedPages = new ArrayBlockingQueue<>(numPages);
     }
 
   
@@ -51,8 +57,28 @@ public class BufferPool {
      */
     public synchronized Page getPage(TransactionId tid, PageId pid, Permissions perm)
         throws TransactionAbortedException, DbException, IOException {
-	//IMPLEMENT THIS
-	return null;
+	
+    	for (Page page : bufferedPages) {
+    		if (page.id().equals(pid)) {
+    			return page;
+    		}
+    		
+    		_nummisses++;
+    	}
+    	
+    	Page page = Database.getCatalog().getDbFile(pid.tableid()).readPage(pid);
+    	if (page != null) {
+        	try {
+        		bufferedPages.add(page);
+        	} catch (IllegalStateException e) {
+        		bufferedPages.remove();
+        		bufferedPages.add(page);
+        	}
+    	} else {
+    		_nummisses++;
+    	}
+    	
+	return page;
 }
 
     /**
