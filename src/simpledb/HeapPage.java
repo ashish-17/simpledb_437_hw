@@ -105,7 +105,7 @@ public class HeapPage implements Page {
 		 * @return - Indexes of all found slots.
 		 */
 		public List<Integer> findSlots(boolean slotValue) {
-			List<Integer> searchResults = new ArrayList<>();
+			List<Integer> searchResults = new ArrayList<Integer>();
 			for (int index = 0; index < numSlots; ++index) {
 				if (getSlotVal(index) == slotValue) {
 					searchResults.add(index);

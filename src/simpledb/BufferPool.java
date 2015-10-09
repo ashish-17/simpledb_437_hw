@@ -36,7 +36,7 @@ public class BufferPool {
 	 *
 	 */
 	class PolicyData {
-		Map<PageId, Integer> policyData = new HashMap<>();
+		Map<PageId, Integer> policyData = new HashMap<PageId, Integer>();
 		int counter = 0;
 		
 		/**
@@ -108,7 +108,7 @@ public class BufferPool {
 	 */
 	public BufferPool(int numPages) {
 		this.maxPagesInBuffer = numPages;
-		bufferedPages = new HashMap<>();
+		bufferedPages = new HashMap<PageId, Page>();
 		policyData = new PolicyData();
 	}
 
