@@ -44,11 +44,12 @@ public class BufferPool {
 		 * @param pageId - Page id whose data needs to be updated.
 		 */
 		public void update(PageId pageId) {
-			if (counter == maxPagesInBuffer) {
+			if (counter == Integer.MAX_VALUE) {
 				counter = 0; // Reset the counter.
 			}
 			
-			policyData.put(pageId, (counter + 1));
+			policyData.put(pageId, counter);
+			counter++;
 		}
 		
 		/**
