@@ -93,9 +93,13 @@ public class HeapPage implements Page {
 		 */
 		public void setSlotVal(int slotIndex, boolean value) {
 			int bitIndex = getBitIndex(slotIndex);
-			int val = value?0:1; // Assign this the compliment of input value.
-			int bitMask = (~(val<<bitIndex));
-			header[getHeaderIndex(slotIndex)] = (header[getHeaderIndex(slotIndex)] & bitMask);
+			int bitMask = value?(1<<bitIndex):(~(1<<bitIndex));
+			
+			if (value) {
+				header[getHeaderIndex(slotIndex)] = (header[getHeaderIndex(slotIndex)] | bitMask);
+			} else {
+				header[getHeaderIndex(slotIndex)] = (header[getHeaderIndex(slotIndex)] & bitMask);
+			}
 		}
 
 		/**
@@ -375,7 +379,7 @@ public class HeapPage implements Page {
 	/**
 	 * Abstraction to fill a slot on this page.
 	 */
-	private void setSlot(int i, boolean value) {
+	public void setSlot(int i, boolean value) {
 		header.setSlotVal(i, value);
 	}
 

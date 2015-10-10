@@ -139,6 +139,28 @@ public class HeapPageReadTest {
     }
 
     /**
+     * Unit test for HeapPage.setslot()
+     */
+    @Test
+    public void testSetSlot() throws Exception {
+        HeapPage page = new HeapPage(pid, EXAMPLE_DATA);
+
+        for (int i = 0; i < 20; ++i) {
+        	assertTrue(page.getSlot(i));
+            page.setSlot(i, false);
+        }
+        
+        for (int i = 0; i < 20; ++i) {
+        	assertFalse(page.getSlot(i));
+            page.setSlot(i, true);
+        }
+        
+        for (int i = 0; i < 20; ++i) {
+        	assertTrue(page.getSlot(i));
+        }
+    }
+    
+    /**
      * JUnit suite target
      */
     public static junit.framework.Test suite() {
