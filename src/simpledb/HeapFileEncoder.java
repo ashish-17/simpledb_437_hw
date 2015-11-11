@@ -178,6 +178,7 @@ public class HeapFileEncoder {
           || done && recordcount > 0
           || done && npages == 0) {
         int i = 0, headerint = 0;
+	int nheaderints=0;
 
         for (i=0; i<nheaderbits; i++) {
 	    if (i < recordcount) {
@@ -189,6 +190,7 @@ public class HeapFileEncoder {
           if (((i+1) % 32) == 0) {
             headerStream.writeInt(headerint);
 	    //	    System.out.println("HEADER WRITTEN["+(i+1)/32+"]="+headerint);
+	    nheaderints++;
             headerint = 0;
           }
         }
@@ -197,7 +199,7 @@ public class HeapFileEncoder {
           headerStream.writeInt(headerint);
 
         // pad the rest of the page with zeroes
-        for (i=0; i<(npagebytes - recordcount * nrecbytes); i++)
+        for (i=0; i<((npagebytes-nheaderints*32) - recordcount * nrecbytes); i++)
           pageStream.write(0);
 	//	System.out.println("RECORDS SO FAR: "+recordcount+"  "+nrecords+"  "+done+"   "+npages+"     "+nheaderbits+"    "+headerint+" length "+npagebytes);
         // write header and body to file

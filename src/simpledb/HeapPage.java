@@ -38,7 +38,7 @@ public class HeapPage implements Page {
 		public Header(DataInputStream dis) {
 			
 			// We are allocating 1 bit per slot, storing data for 32 slots in one integer.
-			int numHeaderInts = (numSlots / 32) + 1;
+			int numHeaderInts = (int)Math.ceil((float)numSlots/32);
 			header = new int[numHeaderInts];
 			
 			try {

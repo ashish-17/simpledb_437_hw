@@ -56,66 +56,46 @@ public class HeapFile implements DbFile {
     /**
      * Returns a Page from tHhe file.
      */
-	public Page readPage(PageId pid) throws NoSuchElementException, IOException, FileNotFoundException {
-		// System.out.println("read hf page" + pid.tableid() +" "+pid.pageno());
+    public Page readPage(PageId pid) throws NoSuchElementException, IOException, FileNotFoundException {
+	//System.out.println("read hf page" + pid.tableid() +"  "+pid.pageno());
+     
+	byte [] readpage = new byte[BufferPool.PAGE_SIZE];
+	for(int i=0; i<BufferPool.PAGE_SIZE; i++)
+	    readpage[i]=0;
+	DataInputStream buffer = new DataInputStream(new FileInputStream(hfile));
+	
+	int tuplesPerPage = (BufferPool.PAGE_SIZE*8) / ((_td.getSize()*8)+1);
+	//	int headersize = (int)Math.ceil(tuplesPerPage/8);
 
-		byte[] readpage = new byte[BufferPool.PAGE_SIZE];
-		for (int i = 0; i < BufferPool.PAGE_SIZE; i++)
-			readpage[i] = 0;
-		DataInputStream buffer = new DataInputStream(new FileInputStream(hfile));
 
-		int tuplesPerPage = (BufferPool.PAGE_SIZE * 8) / ((_td.getSize() * 8) + 1);
-		int headersize = (int) Math.ceil(tuplesPerPage / 8);
-
-		try {
-			// The headeer size may not be right
-			int sk = buffer.skipBytes((BufferPool.PAGE_SIZE + headersize + 1) * pid.pageno());
-			if (sk != -1) {
-				int c = buffer.read(readpage, 0, BufferPool.PAGE_SIZE);
-				if (c != -1) {
-					if (c != BufferPool.PAGE_SIZE)
-						readpage[c] = -1;
-					HeapPageId newPageId = (HeapPageId) pid;
-					return new HeapPage(newPageId, readpage);
-				} else
-					return null;
-			} else
-				return null;
-		} catch (IOException e) {
-			return null;
-		} catch (NoSuchElementException e) {
-			return null;
+	try {
+	    //The headeer size may not be right
+	    int sk = buffer.skipBytes((BufferPool.PAGE_SIZE)*pid.pageno());
+	    if(sk!=-1){
+		int c = buffer.read(readpage,0,BufferPool.PAGE_SIZE);
+		if (c!=-1){
+		    if (c!=BufferPool.PAGE_SIZE)
+			readpage[c]=-1;
+		    HeapPageId newPageId = (HeapPageId) pid;
+		    return new HeapPage(newPageId,readpage);
 		}
+		else
+		    return null;
+	    }
+	    else
+		return null;
+	} catch (IOException e) {
+	    return null;
+	} catch (NoSuchElementException e){
+	    return null;
 	}
+    }
 
     /**
      * Writes the given page to the appropriate location in the file.
      */
     public void writePage(Page page) throws IOException {
-        int pageCount = numPages();
-        if (page.id().pageno() <= pageCount) {
-        	// Page already present in the heap file, we need to overwrite its contents.
-        	RandomAccessFile output = new RandomAccessFile(hfile, "rw");
-        	try {
-            	int bytesToSkip = (BufferPool.PAGE_SIZE * (page.id().pageno() - 1));
-            	output.seek(bytesToSkip);
-            	output.write(page.getPageData());
-        	} catch (Exception e) {
-        		throw new IOException(e);
-        	} finally {
-        		output.close();
-			}
-        } else {
-        	// Append the page at the end of the file.
-        	DataOutputStream output = new DataOutputStream(new FileOutputStream(hfile, true));
-        	try {
-            	output.write(page.getPageData());
-        	} catch (Exception e) {
-        		throw new IOException(e);
-        	} finally {
-        		output.close();
-			}
-        }
+        // some code goes here
     }
 
     /**
@@ -124,7 +104,7 @@ public class HeapFile implements DbFile {
     public int numPages() {
 
        	int tuplesPerPage = (BufferPool.PAGE_SIZE*8) / ((_td.getSize()*8)+1);
-      	int pageCount = (int) (Math.ceil(this.hfile.length() / (BufferPool.PAGE_SIZE+(tuplesPerPage/8))));        
+       	int pageCount = (int) (Math.ceil((double)this.hfile.length() / (double)(BufferPool.PAGE_SIZE)));
 	//	System.out.println(tuplesPerPage*_td.getSize()+"    "+this.hfile.length()+":"+tuplesPerPage+":"+_td.getSize()+">>>> "+pageCount);
 
 
