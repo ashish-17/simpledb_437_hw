@@ -34,7 +34,9 @@ public class Join extends AbstractDbIterator {
      * @param child2 Iterator for the right(inner) relation to join
      */
     public Join(JoinPredicate p, DbIterator child1, DbIterator child2) {
-	//IMPLEMENT THIS
+    	this._predicate = p;
+    	this._outerRelation = child1;
+    	this._innerRelation = child2;
     }
 
     public void setJoinAlgorithm(int joinAlgo){
@@ -44,23 +46,35 @@ public class Join extends AbstractDbIterator {
      * @see simpledb.TupleDesc#combine(TupleDesc, TupleDesc) for possible implementation logic.
      */
     public TupleDesc getTupleDesc() {
-	//IMPLEMENT THIS
-	return null;
+    	return TupleDesc.combine(_outerRelation.getTupleDesc(), _innerRelation.getTupleDesc());
     }
 
     public void open()
         throws DbException, NoSuchElementException, TransactionAbortedException, IOException {
-		//IMPLEMENT THIS
-
+    	this._outerRelation.open();
+    	this._innerRelation.open();
+    	
+    	_numMatches = 0;
+    	_numComp = 0;
+    	
+    	_outerRecent = null;
+    	_innerRecent = null;
     }
 
     public void close() {
-//IMPLEMENT THIS
-
+    	this._outerRelation.close();
+    	this._innerRelation.close();
     }
 
     public void rewind() throws DbException, TransactionAbortedException, IOException {
-//IMPLEMENT THIS
+    	this._outerRelation.rewind();
+    	this._innerRelation.rewind();  
+
+    	_numMatches = 0;
+    	_numComp = 0;
+    	
+    	_outerRecent = null;
+    	_innerRecent = null;
     }
 
     /**
@@ -93,8 +107,33 @@ public class Join extends AbstractDbIterator {
     }
 
     protected Tuple SNL_readNext() throws TransactionAbortedException, DbException {
-	//IMPLEMENT THIS 
-	return null;
+    	try {
+			while(_outerRelation.hasNext() || (_outerRecent != null)) {
+				if (_outerRecent == null) {
+					_outerRecent = _outerRelation.next();
+				}
+				while ((_outerRecent != null) && _innerRelation.hasNext()) {
+					_innerRecent = _innerRelation.next();
+					if (_innerRecent != null) {
+						++_numComp;
+						if (_predicate.filter(_outerRecent, _innerRecent)) {
+							++_numMatches;
+							return joinTuple(_outerRecent, _innerRecent, getTupleDesc());
+						}
+					}
+				}
+				
+				if (_outerRelation.hasNext()) {
+					_innerRelation.rewind();
+				}
+				
+				_outerRecent = null;
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+    	
+    	return null;
     }
 
 
@@ -123,8 +162,15 @@ public class Join extends AbstractDbIterator {
 
 
     private Tuple joinTuple(Tuple outer, Tuple inner, TupleDesc tupledesc){
-	//IMPLEMENT THIS
-	return null;
+    	Tuple combinedTuple = new Tuple(tupledesc);
+    	for (int i = 0; i < tupledesc.numFields(); ++i) {
+    		if (i < outer.getTupleDesc().numFields()) {
+    			combinedTuple.setField(i, outer.getField(i));
+    		} else {
+    			combinedTuple.setField(i, inner.getField(i - outer.getTupleDesc().numFields()));
+    		}
+    	}
+    	return combinedTuple;
     }
 
     public int getNumMatches(){
