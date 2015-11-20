@@ -6,12 +6,20 @@ package simpledb;
 import java.io.IOException;
 
 /**
+ * Simple nested loop join.
  * @author ashish
  *
  */
 public class SNLJoin extends AbstractJoin {
 
+    /**
+     * Last used tuple in outer relation.
+     */
     private Tuple _outerRecent=null;
+    
+    /**
+     * Last used tuple in inner relation.
+     */
     private Tuple _innerRecent=null;
     
 	public SNLJoin(JoinPredicate p, DbIterator child1, DbIterator child2) {
@@ -68,7 +76,7 @@ public class SNLJoin extends AbstractJoin {
 					_innerRelation.rewind();
 				}
 				
-				_outerRecent = null;
+				_outerRecent = null; // To ensure getting next tuple (if any) in following iteration.
 			}
 		} catch (IOException e) {
 			e.printStackTrace();

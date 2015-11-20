@@ -8,18 +8,50 @@ import java.util.Iterator;
 import java.util.NoSuchElementException;
 
 /**
+ * Page nested Loop join.
  * @author ashish
  *
  */
 public class PNLJoin extends AbstractJoin {
 
+    /**
+     * A Page wise iterator on DB File for outer relation.
+     */
     private BufferedDBIterator _outerPageIt;
+    
+    /**
+     * A Page wise iterator on DB file for inner relation.
+     */
     private BufferedDBIterator _innerPageIt;
+    
+    /**
+     * Last page read for outer relation
+     */
     private HeapPage _outerRecentPage = null;
+    
+    /**
+     * Last heap page read for inner relation.
+     */
     private HeapPage _innerRecentPage = null;
+    
+    /**
+     * Tuple iterator for tuples in outer relation's page.
+     */
     private Iterator<Tuple> _outerTupleIt = null;
+    
+    /**
+     * Tuple iterator for tuples in inner relation's page.
+     */
     private Iterator<Tuple> _innerTupleIt = null;
+    
+    /**
+     * Last used tuple in outer relation.
+     */
     private Tuple _outerRecent=null;
+    
+    /**
+     * Last used tuple in inner relation.
+     */
     private Tuple _innerRecent=null;
     
 	public PNLJoin(JoinPredicate p, DbIterator child1, DbIterator child2) {
@@ -82,6 +114,7 @@ public class PNLJoin extends AbstractJoin {
 						_innerTupleIt = _innerRecentPage.iterator();
 					}
 					
+					// Iterate over tuples in outer relation's page and join them with tuples in inner relation's page.
 					while (_outerTupleIt.hasNext() || _outerRecent != null) {
 						if (_outerRecent == null) {
 							_outerRecent = _outerTupleIt.next();
@@ -110,7 +143,7 @@ public class PNLJoin extends AbstractJoin {
 					_outerTupleIt = _outerRecentPage.iterator(); // Reset the iterator to start position
 					_outerRecent = null;
 					
-					_innerRecentPage = null;
+					_innerRecentPage = null;  // To ensure getting next page (if any) in following iteration.
 					_innerTupleIt = null;
 				}
 				
@@ -118,7 +151,7 @@ public class PNLJoin extends AbstractJoin {
 					_innerPageIt.rewind();
 				}
 
-				_outerRecentPage = null;
+				_outerRecentPage = null;  // To ensure getting next page (if any) in following iteration.
 				_outerTupleIt = null;
 			}
 		} catch (NoSuchElementException | IOException e) {

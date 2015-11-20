@@ -7,6 +7,9 @@ import java.io.IOException;
 import java.util.NoSuchElementException;
 
 /**
+ * A wrapper iterator class which uses the input DbIterator
+ * to iterate over the underlying DBFile page-wise.
+ * (Inspired by BufferedFileReader)
  * @author ashish
  *
  */

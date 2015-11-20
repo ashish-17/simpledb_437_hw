@@ -4,6 +4,9 @@ import java.io.*;
 
 /**
  * The Join operator implements the relational join operation.
+ * This class is a bit redundant now as AbstractJoin is better suited at its place
+ * But I didn't want to change the api for test cases as they expect Join not AbstractJoin.
+ * So I decided to use the Join class as a Factory design for join algorithms.
  */
 public class Join extends AbstractDbIterator {
 

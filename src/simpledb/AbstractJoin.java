@@ -6,6 +6,8 @@ package simpledb;
 import java.io.IOException;
 
 /**
+ * All joins should extend this class.
+ * It has some default functionality implemented for joins.
  * @author ashish
  *
  */

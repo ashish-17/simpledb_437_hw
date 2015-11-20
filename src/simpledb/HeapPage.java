@@ -6,6 +6,10 @@ import java.io.*;
 /**
  * HeapPage stores pages of HeapFiles and implements the Page interface that is
  * used by BufferPool.
+ * 
+ * November 20, 2015-
+ * Now we not only use it in BufferPool but but also for temporary storage of tuples.
+ * Needed it for page wise iteration in page nested loop join.
  *
  * @see HeapFile
  * @see BufferPool
@@ -197,7 +201,7 @@ public class HeapPage implements Page {
 	 * @throws IOException
 	 */
 	private HeapPage(byte[] data, TupleDesc td) throws IOException {
-		this.pid = null;
+		this.pid = null; // No need of a pid here as this page serves as a dummy buffer page and is meant to be used independent of BufferManager.
 		this.td = td;
 		this.numSlots = (BufferPool.PAGE_SIZE * 8) / ((td.getSize() * 8) + 1);
 		
@@ -211,7 +215,7 @@ public class HeapPage implements Page {
 				tuples[i] = readNextTuple(dis, i);
 			}
 		} catch (NoSuchElementException e) {
-			// e.printStackTrace();
+			e.printStackTrace();
 		}
 
 		dis.close();
