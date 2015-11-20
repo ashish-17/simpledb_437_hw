@@ -51,7 +51,5 @@ public interface DbIterator {
    * @throws TransactionAbortedException
    * @throws IOException
    */
-  public default Tuple seek(RecordID record) throws DbException, TransactionAbortedException, IOException {
-	  throw new DbException("No a supported operation");
-  }
+  public Tuple seek(RecordID record) throws DbException, TransactionAbortedException, IOException;
 }

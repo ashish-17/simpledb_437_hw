@@ -154,7 +154,10 @@ public class PNLJoin extends AbstractJoin {
 				_outerRecentPage = null;  // To ensure getting next page (if any) in following iteration.
 				_outerTupleIt = null;
 			}
-		} catch (NoSuchElementException | IOException e) {
+		} catch (NoSuchElementException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}

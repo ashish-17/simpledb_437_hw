@@ -1,5 +1,6 @@
 package simpledb;
 
+import java.io.IOException;
 import java.util.NoSuchElementException;
 
 /** Helper for implementing DbIterators. Handles hasNext()/next() logic and
@@ -34,5 +35,13 @@ public abstract class AbstractDbIterator implements DbIterator {
         next = null;
     }
 
-    private Tuple next = null;
+    /* (non-Javadoc)
+	 * @see simpledb.DbIterator#seek(simpledb.RecordID)
+	 */
+	@Override
+	public Tuple seek(RecordID record) throws DbException, TransactionAbortedException, IOException {
+		throw new DbException("Not a supported operation");
+	}
+
+	private Tuple next = null;
 }

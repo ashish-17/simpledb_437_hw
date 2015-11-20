@@ -1,5 +1,6 @@
 package simpledb;
 
+import java.io.IOException;
 import java.util.*;
 
 /**
@@ -49,4 +50,9 @@ public class TupleIterator implements DbIterator {
     public void close() {
         i = null;
     }
+
+	@Override
+	public Tuple seek(RecordID record) throws DbException, TransactionAbortedException, IOException {
+		throw new DbException("Not a supported operation");
+	}
 }
