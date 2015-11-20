@@ -120,6 +120,18 @@ public class HeapPage implements Page {
 		}
 		
 		/**
+		 * @return the index of first empty slot, -1 if no slot available
+		 */
+		public int findFirstEmptySlot() {
+			for (int index = 0; index < numSlots; ++index) {
+				if (!getSlotVal(index)) {
+					return index;
+				}
+			}
+			return -1;
+		}
+		
+		/**
 		 * Given a slot ID what's its corresponding header index?
 		 * @param slotIndex - Slot's index in heap file.
 		 * @return - Header index.
@@ -178,6 +190,42 @@ public class HeapPage implements Page {
 		dis.close();
 	}
 
+	/**
+	 * Helper constructor to create a heap page to be used as buffer.
+	 * @param data - Data to be put in tmp page
+	 * @param td - Tuple description for the corresponding table.
+	 * @throws IOException
+	 */
+	private HeapPage(byte[] data, TupleDesc td) throws IOException {
+		this.pid = null;
+		this.td = td;
+		this.numSlots = (BufferPool.PAGE_SIZE * 8) / ((td.getSize() * 8) + 1);
+		
+		DataInputStream dis = new DataInputStream(new ByteArrayInputStream(data));
+		this.header = new Header(dis);
+
+		try {
+			// allocate and read the actual records of this page
+			tuples = new Tuple[numSlots];
+			for (int i = 0; i < numSlots; i++) {
+				tuples[i] = readNextTuple(dis, i);
+			}
+		} catch (NoSuchElementException e) {
+			// e.printStackTrace();
+		}
+
+		dis.close();
+	}
+	
+	/**
+	 * @param td - Table description data for the corresponding table.
+	 * @return A heap Page for storing page data temporarily.
+	 * @throws IOException
+	 */
+	public static HeapPage createTempHeapPage(TupleDesc td) throws IOException {
+		return new HeapPage(new byte[BufferPool.PAGE_SIZE], td);
+	}
+	
 	/**
 	 * Return a view of this page before it was modified -- used by recovery
 	 */
@@ -339,7 +387,13 @@ public class HeapPage implements Page {
 	 *            The tuple to add.
 	 */
 	public void addTuple(Tuple t) throws DbException {
-		// no need to implement this
+		int index = header.findFirstEmptySlot();
+		if (index == -1) {
+			throw new DbException("No empty slot for new tuple");
+		} else {
+			header.setSlotVal(index, true);
+			tuples[index] = t;
+		}
 	}
 
 	/**

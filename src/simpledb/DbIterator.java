@@ -42,4 +42,16 @@ public interface DbIterator {
    * Closes the iterator.
    */
   public void close();
+
+  /**
+   * Seek the underlying iterator to a particular record.
+   * @param record - Record Id for the tuple to be seeked in DB file.
+   * @return The tuple with the input record ID.
+   * @throws DbException
+   * @throws TransactionAbortedException
+   * @throws IOException
+   */
+  public default Tuple seek(RecordID record) throws DbException, TransactionAbortedException, IOException {
+	  throw new DbException("No a supported operation");
+  }
 }

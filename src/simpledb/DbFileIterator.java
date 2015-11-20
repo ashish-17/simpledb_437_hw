@@ -40,4 +40,13 @@ public interface DbFileIterator {
     public void close();
 
     public int getPagesRead();
+    
+    /**
+     * @param record - Record Id for the tuple to be seeked in DB file.
+     * @return The tuple with the input record ID.
+     * @throws DbException
+     * @throws TransactionAbortedException
+     * @throws IOException
+     */
+    public Tuple seek(RecordID record) throws DbException, TransactionAbortedException, IOException;
 }

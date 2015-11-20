@@ -112,4 +112,12 @@ public class SeqScan implements DbIterator {
     public DbFileIterator getIterator(){
 	return _iterator;
     }
+
+	/* (non-Javadoc)
+	 * @see simpledb.DbIterator#seek(simpledb.RecordID)
+	 */
+	@Override
+	public Tuple seek(RecordID record) throws DbException, TransactionAbortedException, IOException {
+		return _iterator.seek(record);
+	}
 }

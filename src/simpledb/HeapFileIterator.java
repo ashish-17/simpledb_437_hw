@@ -49,6 +49,36 @@ public class HeapFileIterator implements DbFileIterator {
         return false;
     }
 
+    public Tuple seek(RecordID record) throws TransactionAbortedException, IOException, DbException {
+    	Tuple tupleSeeked = null;
+    	if (record.pageid().pageno() >= _numPages) {
+    		throw new NoSuchElementException("Invalid page id for record");
+    	} 
+
+    	if (record.pageid().pageno() != _currentPageId) {
+        	_currentPage = readPage(record.pageid().pageno());
+        	_currentPageId = record.pageid().pageno();
+        	_pagesRead++;
+    	}
+
+    	_tupleIterator = _currentPage.iterator();
+    	
+    	Tuple tmp = null;
+    	while (_tupleIterator.hasNext()) {
+    		tmp = _tupleIterator.next();
+    		if (tmp.getRecordID().equals(record)) {
+    			tupleSeeked = tmp;
+    			break;
+    		}
+    	}
+    	
+    	if (tupleSeeked == null) {
+    		throw new NoSuchElementException("Invalid Record id for record");
+    	}
+    	
+		return tupleSeeked;
+    }
+    
     public Tuple next()
         throws DbException, TransactionAbortedException {
         if (_tupleIterator == null) {

@@ -79,7 +79,11 @@ public class Tuple {
      * where \t is any whitespace, except newline, and \n is a newline
      */
     public String toString() {
-        // some code goes here
-        throw new UnsupportedOperationException("Implement this");
+    	StringBuffer sb = new StringBuffer();
+    	for (int i=0; i<tupled.numFields();i++) {
+    	    sb.append(tupleFields[i].toString() + " ");
+        }
+    	
+        return sb.toString();
     }
 }
