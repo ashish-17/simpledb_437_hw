@@ -55,12 +55,27 @@ public class SMJJoin extends AbstractJoin {
 		Tuple result = null;
 		
 		try {
-			while((_outerRelation.hasNext() && _innerRelation.hasNext()) || ((_outerRecent != null) && (_innerRecent != null))) {
+			while((_outerRelation.hasNext() && _innerRelation.hasNext()) || (_outerRecent != null)) {
 				if (_outerRecent == null) {
 					_outerRecent = _outerRelation.next();
 				}
+				
 				if (_innerRecent == null) {
-					_innerRecent = _innerRelation.next();
+					if (_innerRelation.hasNext()) {
+						_innerRecent = _innerRelation.next();
+					} else {
+						if (_outerRelation.hasNext()) {
+							_outerRecent = _outerRelation.next();
+							if (_firstMatch != null) {
+								_innerRecent = _innerRelation.seek(_firstMatch.getRecordID());
+								_firstMatch = null;
+							}
+						}
+					}
+					
+					if (_innerRecent == null) {
+						break;
+					}
 				}
 				
 				if (_predicate.filter(_outerRecent, _innerRecent)) {
@@ -72,23 +87,13 @@ public class SMJJoin extends AbstractJoin {
 					if (_firstMatch == null) {
 						_firstMatch = _innerRecent;
 					}
-					
-					if (_innerRelation.hasNext()) {
-						_innerRecent = _innerRelation.next();
-					} else {
-						_innerRecent = null;
-						if (_outerRelation.hasNext()) {
-							_outerRecent = _outerRelation.next();
-							if (_firstMatch != null) {
-								_innerRecent = _innerRelation.seek(_firstMatch.getRecordID());
-								_firstMatch = null;
-							}
-						}
-					}
-					
+
+					_innerRecent = null;
+										
 					break;
 				} else if (_predicate.getLeftField(_outerRecent).compare(Op.LESS_THAN, _predicate.getRightField(_innerRecent))) {
 					++_numComp;
+
 					if (_outerRelation.hasNext()) {
 						_outerRecent = _outerRelation.next();
 						if (_firstMatch != null) {
@@ -100,18 +105,7 @@ public class SMJJoin extends AbstractJoin {
 					}
 				} else {
 					++_numComp;
-					if (_innerRelation.hasNext()) {
-						_innerRecent = _innerRelation.next();
-					} else {
-						_innerRecent = null;
-						if (_outerRelation.hasNext()) {
-							_outerRecent = _outerRelation.next();
-							if (_firstMatch != null) {
-								_innerRecent = _innerRelation.seek(_firstMatch.getRecordID());
-								_firstMatch = null;
-							}
-						}
-					}
+					_innerRecent = null;
 					
 					if (_firstMatch != null) {
 						_firstMatch = null;
