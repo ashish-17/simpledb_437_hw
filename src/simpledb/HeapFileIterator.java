@@ -55,11 +55,12 @@ public class HeapFileIterator implements DbFileIterator {
     		throw new NoSuchElementException("Invalid page id for record");
     	} 
 
-    	if (record.pageid().pageno() != _currentPageId) {
-        	_currentPage = readPage(record.pageid().pageno());
-        	_currentPageId = record.pageid().pageno()+1;
-        	_pagesRead++;
-    	}
+		if (((_currentPageId == 0) && (_currentPageId != record.pageid().pageno()))
+				|| (record.pageid().pageno() != (_currentPageId - 1))) {
+			_currentPage = readPage(record.pageid().pageno());
+			_currentPageId = record.pageid().pageno() + 1;
+			_pagesRead++;
+		}
 
     	_tupleIterator = _currentPage.iterator();
     	

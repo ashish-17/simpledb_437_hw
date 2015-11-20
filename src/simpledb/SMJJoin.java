@@ -66,10 +66,11 @@ public class SMJJoin extends AbstractJoin {
 					} else {
 						if (_outerRelation.hasNext()) {
 							_outerRecent = _outerRelation.next();
-							if (_firstMatch != null) {
+							if (_firstMatch != null && _predicate.filter(_outerRecent, _firstMatch)) {
 								_innerRecent = _innerRelation.seek(_firstMatch.getRecordID());
-								_firstMatch = null;
 							}
+							
+							_firstMatch = null;
 						}
 					}
 					
@@ -89,17 +90,18 @@ public class SMJJoin extends AbstractJoin {
 					}
 
 					_innerRecent = null;
-										
+					
 					break;
 				} else if (_predicate.getLeftField(_outerRecent).compare(Op.LESS_THAN, _predicate.getRightField(_innerRecent))) {
 					++_numComp;
 
 					if (_outerRelation.hasNext()) {
 						_outerRecent = _outerRelation.next();
-						if (_firstMatch != null) {
+						if (_firstMatch != null && _predicate.filter(_outerRecent, _firstMatch)) {
 							_innerRecent = _innerRelation.seek(_firstMatch.getRecordID());
-							_firstMatch = null;
 						}
+						
+						_firstMatch = null;
 					} else {
 						_outerRecent = null;
 					}
