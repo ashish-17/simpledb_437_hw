@@ -57,7 +57,7 @@ public class HeapFileIterator implements DbFileIterator {
 
     	if (record.pageid().pageno() != _currentPageId) {
         	_currentPage = readPage(record.pageid().pageno());
-        	_currentPageId = record.pageid().pageno();
+        	_currentPageId = record.pageid().pageno()+1;
         	_pagesRead++;
     	}
 
